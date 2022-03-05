@@ -5,12 +5,14 @@
 #include "Robot.h"
 #include <fmt/core.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/Joystick.h>
+
 #include "ArcadeVelocityControl.h"
 #include "Elevator.h"
-#include <frc/Joystick.h>
 #include "Intake.h"
 #include "Shooter.h"
 #include "Pneumatics.h"
+#include "turret.h"
 //backleft wheel - 4
 //frontleft wheel - 1
 //backright wheel - 3
@@ -23,15 +25,19 @@
 
 frc::Joystick joystick{0};
 ArcadeVelocityControl arcadeVelocity;
-Elevator Elevate;
 Intake BallIntake;
 Shooter Shoot;
-//Pneumatics Pneu;
+Pneumatics Pneu;
+Turret turret;
 
 void Robot::RobotInit() {
     m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
     m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
     frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+
+    arcadeVelocity.DriveInit();
+    Shoot.init();
+    Pneu.init();
 }
 
 /**
@@ -77,15 +83,14 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-    arcadeVelocity.DriveInit();
-    Shoot.init();
-    //Pneu.init();
+
 }
 
 void Robot::TeleopPeriodic() {
     arcadeVelocity.Drive(joystick.GetX(), joystick.GetY());
-    Elevate.ElevatorBalls(joystick.GetRawButton(2), joystick.GetRawButton(5), joystick.GetRawButton(6));
+    Shoot.ElevatorBalls(joystick.GetRawButton(5), joystick.GetRawButton(6));
     BallIntake.IntakeBalls(joystick.GetRawButton(3), joystick.GetRawButton(4));
+    Pneu.moveIntake(joystick.GetRawButton(3), joystick.GetRawButton(4));
     Shoot.spinrev(joystick.GetRawButton(1));
 }
 

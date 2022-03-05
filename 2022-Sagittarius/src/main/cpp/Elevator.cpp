@@ -2,24 +2,28 @@
 
 Elevator::Elevator(){}
 
+void Elevator::shooterFeed(double speed){
+    if (speed != lastSpeed){
+        ElevatorOuttake.Set(speed);
+        lastSpeed = speed;
+    }
+}
 
-
-void Elevator::ElevatorBalls(bool ButtTwo, bool ButtThree, bool ButtFour){
+void Elevator::ElevatorBalls(bool ButtThree, bool ButtFour){
 
     if (ButtFour){
-        //ElevatorIntake.Set(0.4);
-        ElevatorOuttake.Set(0.2);
+        Elevator::shooterFeed(0.2);
+        disabled = false;
     }
     else if (ButtThree){
         ElevatorIntake.Set(0.4);
-        ElevatorOuttake.Set(-0.1);
+        Elevator::shooterFeed(-0.1);
+        disabled = false;
     }
-    else if (ButtTwo){
-        ElevatorOuttake.Set(-1.0);
-    }
-    else{
-        ElevatorOuttake.Set(0);
+    else if (disabled == false){
+        Elevator::shooterFeed(0.0);
         ElevatorIntake.Set(0);
+        disabled = true;
     }
 }
 

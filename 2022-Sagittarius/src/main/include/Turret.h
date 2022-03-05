@@ -15,9 +15,9 @@ class Turret{
         std::string _sb;
 	    int _loops = 0;
         double sum = 0;
-        double h1 = 40;      //height of robot in inches
+        double h1 = 29;      //height of robot in inches
         double h2 = 89.5;    //height of target centerpoint in inches
-        double alpha = 14.7*3.14159265/180; //angle of camera on robot in rads
+        double alpha = 30*3.14159265/180; //angle of camera on robot in rads
         double d;
     
     private:
