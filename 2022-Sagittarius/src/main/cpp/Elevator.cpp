@@ -6,21 +6,20 @@ Elevator::Elevator(){}
 
 void Elevator::ElevatorBalls(bool ButtTwo, bool ButtThree, bool ButtFour){
 
-    if (ButtThree){
-        ElevatorIntake.Set(0.3);
+    if (ButtFour){
+        //ElevatorIntake.Set(0.4);
+        ElevatorOuttake.Set(0.2);
     }
-    else if (ButtFour){
-        ElevatorIntake.Set(-0.3);
+    else if (ButtThree){
+        ElevatorIntake.Set(0.4);
+        ElevatorOuttake.Set(-0.1);
     }
-    else{
-        ElevatorIntake.Set(0);
-    }
-    
-    if (ButtTwo){
-        ElevatorOuttake.Set(1.0);
+    else if (ButtTwo){
+        ElevatorOuttake.Set(-1.0);
     }
     else{
         ElevatorOuttake.Set(0);
+        ElevatorIntake.Set(0);
     }
 }
 

@@ -39,7 +39,7 @@ void ArcadeVelocityControl::DriveInit(){
 }
 
 void ArcadeVelocityControl::Drive(double Twist, double Y){
-    double twist = deadbandremover(Twist);
+    double twist = deadbandremover(Twist)/2;
     double y = deadbandremover(Y);
 
     double vTwist = twist/wheelCircumference*gearRatio*60*4;

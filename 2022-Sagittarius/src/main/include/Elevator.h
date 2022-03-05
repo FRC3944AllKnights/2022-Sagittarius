@@ -8,7 +8,6 @@ class Elevator{
         
         Elevator();
         void ElevatorBalls(bool ButtTwo, bool ButtThree, bool ButtFour);
-
     private:
 
         rev::CANSparkMax ElevatorIntake{8, rev::CANSparkMax::MotorType::kBrushless};

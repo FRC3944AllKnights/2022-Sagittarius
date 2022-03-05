@@ -9,6 +9,8 @@
 #include "Elevator.h"
 #include <frc/Joystick.h>
 #include "Intake.h"
+#include "Shooter.h"
+#include "Pneumatics.h"
 //backleft wheel - 4
 //frontleft wheel - 1
 //backright wheel - 3
@@ -16,11 +18,15 @@
 //intake - 5
 //elevator intake - 8
 //elevator outtake - 7
+//shooter left - 21
+//shooter right - 20
 
 frc::Joystick joystick{0};
 ArcadeVelocityControl arcadeVelocity;
 Elevator Elevate;
 Intake BallIntake;
+Shooter Shoot;
+//Pneumatics Pneu;
 
 void Robot::RobotInit() {
     m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
@@ -70,12 +76,17 @@ void Robot::AutonomousPeriodic() {
   }
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() {
+    arcadeVelocity.DriveInit();
+    Shoot.init();
+    //Pneu.init();
+}
 
 void Robot::TeleopPeriodic() {
-    arcadeVelocity.Drive(joystick.GetTwist(), joystick.GetY());
-    Elevate.ElevatorBalls(joystick.GetRawButton(1), joystick.GetRawButton(5), joystick.GetRawButton(6));
+    arcadeVelocity.Drive(joystick.GetX(), joystick.GetY());
+    Elevate.ElevatorBalls(joystick.GetRawButton(2), joystick.GetRawButton(5), joystick.GetRawButton(6));
     BallIntake.IntakeBalls(joystick.GetRawButton(3), joystick.GetRawButton(4));
+    Shoot.spinrev(joystick.GetRawButton(1));
 }
 
 void Robot::DisabledInit() {}
