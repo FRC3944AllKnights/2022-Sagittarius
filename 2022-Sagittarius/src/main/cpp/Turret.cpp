@@ -5,13 +5,11 @@ Turret::Turret(){
 }
 
 void Turret::init(){
-   
-    
 }
 
 void Turret::safetyController(double speed){
     if(speed > 0){
-        if(turretLimitRight.Get()){
+        if(true){//turretLimitRight.Get()){
             turretSpinner.Set(ControlMode::PercentOutput, speed);
         }
         else{
@@ -19,7 +17,7 @@ void Turret::safetyController(double speed){
         }
     }
     else{
-        if(turretLimitLeft.Get()){
+        if(true){//turretLimitLeft.Get()){
             turretSpinner.Set(ControlMode::PercentOutput, speed);
         }
         else{
@@ -47,7 +45,7 @@ void Turret::smartMan(bool left, bool right, bool aimybot, double xPos, double y
         Turret::safetyController(0); 
     }
 
-    if (++_loops >= 20) {
+    /*if (++_loops >= 20) {
 		_loops = 0;
         _sb.append("\tangle in degrees");
 	    _sb.append(std::to_string(yPos));
@@ -58,6 +56,6 @@ void Turret::smartMan(bool left, bool right, bool aimybot, double xPos, double y
 
 		printf("%s\n",_sb.c_str());
         _sb.clear();
-	}
+	}*/
 }
     

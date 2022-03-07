@@ -6,7 +6,7 @@
 class ArcadeVelocityControl{
     public:
         ArcadeVelocityControl();
-        void Drive(double Twist, double Y);
+        void Drive(double X, double Y, double Twist);
         void DriveInit();
 
     private:

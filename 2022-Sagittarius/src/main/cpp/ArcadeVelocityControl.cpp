@@ -38,26 +38,37 @@ void ArcadeVelocityControl::DriveInit(){
     Front_Right_PID.SetOutputRange(kMinOutput, kMaxOutput);
 }
 
-void ArcadeVelocityControl::Drive(double Twist, double Y){
-    double twist = deadbandremover(Twist)/2;
+void ArcadeVelocityControl::Drive(double X, double Y, double Twist){
+    double twist = deadbandremover(Twist)/3*0;
     double y = deadbandremover(Y);
+    double x = deadbandremover(X)/2.7;
 
     double vTwist = twist/wheelCircumference*gearRatio*60*4;
     double vY = y/wheelCircumference*gearRatio*60*4;
+    double vX = x/wheelCircumference*gearRatio*60*4;
 
-    if (vTwist == 0 and vY == 0){
-      Back_Right.Set(0);
-      Front_Right.Set(0);
+    if (vX == 0 and vY == 0){
+      if(vTwist == 0){
+        Back_Right.Set(0);
+        Front_Right.Set(0);
 
-      Back_Left.Set(0);
-      Front_Left.Set(0);
+        Back_Left.Set(0);
+        Front_Left.Set(0);
+      }
+      else{
+        Back_Right_PID.SetReference((vTwist), rev::ControlType::kVelocity);
+        Front_Right_PID.SetReference((vTwist), rev::ControlType::kVelocity);
+
+        Back_Left_PID.SetReference((vTwist), rev::ControlType::kVelocity);
+        Front_Left_PID.SetReference((vTwist), rev::ControlType::kVelocity);
+      }
     }
     else{
-      Back_Right_PID.SetReference((vY + vTwist), rev::ControlType::kVelocity);
-      Front_Right_PID.SetReference((vY + vTwist), rev::ControlType::kVelocity);
+      Back_Right_PID.SetReference((vY + vX), rev::ControlType::kVelocity);
+      Front_Right_PID.SetReference((vY + vX), rev::ControlType::kVelocity);
 
-      Back_Left_PID.SetReference(-(vY - vTwist), rev::ControlType::kVelocity);
-      Front_Left_PID.SetReference(-(vY - vTwist), rev::ControlType::kVelocity);
+      Back_Left_PID.SetReference(-(vY - vX), rev::ControlType::kVelocity);
+      Front_Left_PID.SetReference(-(vY - vX), rev::ControlType::kVelocity);
     }
 }
 

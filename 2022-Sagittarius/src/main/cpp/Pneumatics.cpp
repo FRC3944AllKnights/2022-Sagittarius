@@ -15,7 +15,7 @@ void Pneumatics::moveIntake(bool deploy, bool retract){
             switchedDown = true;
         }
     }
-    else if(retract){
+    else{
         if (switchedDown){
             IntakeSolenoid.Set(frc::DoubleSolenoid::Value::kReverse);
             switchedDown = false;

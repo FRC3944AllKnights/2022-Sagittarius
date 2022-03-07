@@ -7,6 +7,11 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Joystick.h>
 
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableValue.h"
+
 #include "ArcadeVelocityControl.h"
 #include "Elevator.h"
 #include "Intake.h"
@@ -87,11 +92,18 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
-    arcadeVelocity.Drive(joystick.GetX(), joystick.GetY());
-    Shoot.ElevatorBalls(joystick.GetRawButton(5), joystick.GetRawButton(6));
-    BallIntake.IntakeBalls(joystick.GetRawButton(3), joystick.GetRawButton(4));
-    Pneu.moveIntake(joystick.GetRawButton(3), joystick.GetRawButton(4));
-    Shoot.spinrev(joystick.GetRawButton(1));
+    double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
+    double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
+    double targetArea = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ta", 0.0);
+    double targetSkew = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ts", 0.0);
+
+    arcadeVelocity.Drive(joystick.GetX(), joystick.GetY(), joystick.GetTwist());
+    Shoot.ElevatorBalls(joystick.GetRawButton(7), joystick.GetRawButton(6));
+    BallIntake.IntakeBalls(joystick.GetRawButton(7), joystick.GetRawButton(8));
+    Pneu.moveIntake(joystick.GetRawButton(7), joystick.GetRawButton(8));
+
+    Shoot.spinrev(joystick.GetRawButton(1), Yoffset);
+    turret.smartMan(joystick.GetRawButton(12), joystick.GetRawButton(11), joystick.GetRawButton(2), Xoffset, Yoffset, targetSkew);
 }
 
 void Robot::DisabledInit() {}

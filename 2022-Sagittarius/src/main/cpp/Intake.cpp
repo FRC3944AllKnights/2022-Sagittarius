@@ -7,10 +7,10 @@ Intake::Intake(){}
 void Intake::IntakeBalls(bool Intake, bool Eject){
 
     if (Intake){
-        IntakeMotor.Set(0.3);
+        IntakeMotor.Set(0.4);
     }
     else if (Eject){
-        IntakeMotor.Set(-0.3);
+        IntakeMotor.Set(-0.4);
     }
     else{
         IntakeMotor.Set(0);
