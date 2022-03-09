@@ -29,6 +29,7 @@
 //shooter right - 20
 
 frc::Joystick joystick{0};
+frc::Joystick joystick2{1};
 ArcadeVelocityControl arcadeVelocity;
 Intake BallIntake;
 Shooter Shoot;

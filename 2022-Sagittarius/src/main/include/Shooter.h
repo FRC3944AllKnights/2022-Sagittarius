@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 
+#include <frc/DigitalInput.h>
 #include "rev/CANSparkMax.h"
 #include "ctre/Phoenix.h"
 #include "frc/Servo.h"
@@ -33,8 +34,10 @@ class Shooter{
         rev::SparkMaxRelativeEncoder shooterRightEncoder = shooterRight.GetEncoder();
 
         double lastSpeed = 0.0;
-        bool isShooting = true;
+        bool isShooting = false;
         rev::CANSparkMax ElevatorIntake{8, rev::CANSparkMax::MotorType::kBrushless};
         rev::CANSparkMax ElevatorOuttake{7, rev::CANSparkMax::MotorType::kBrushless};
+
+        frc::DigitalInput elevatorSwitch{9};
 };
 #endif

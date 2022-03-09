@@ -44,7 +44,12 @@ void Shooter::shooterFeed(double speed)
         ElevatorOuttake.Set(-1.0);
     }
     else{
-        ElevatorOuttake.Set(speed);
+        if(elevatorSwitch.Get() == false){
+            ElevatorOuttake.Set(0);
+        }
+        else{
+            ElevatorOuttake.Set(speed);
+        }
     }
 }
 

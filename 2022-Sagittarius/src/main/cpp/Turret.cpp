@@ -5,11 +5,14 @@ Turret::Turret(){
 }
 
 void Turret::init(){
+    turretSpinner.SetSelectedSensorPosition(0);
 }
 
 void Turret::safetyController(double speed){
+    int encoder = turretSpinner.GetSelectedSensorPosition();
+    int limit = 1300;
     if(speed > 0){
-        if(true){//turretLimitRight.Get()){
+        if(encoder <= limit){//turretLimitRight.Get()){
             turretSpinner.Set(ControlMode::PercentOutput, speed);
         }
         else{
@@ -17,7 +20,7 @@ void Turret::safetyController(double speed){
         }
     }
     else{
-        if(true){//turretLimitLeft.Get()){
+        if(encoder >= -limit){//turretLimitLeft.Get()){
             turretSpinner.Set(ControlMode::PercentOutput, speed);
         }
         else{

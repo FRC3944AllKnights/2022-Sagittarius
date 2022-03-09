@@ -22,9 +22,6 @@ class Turret{
     
     private:
         WPI_TalonSRX turretSpinner{21};
-
-        frc::DigitalInput turretLimitLeft{4};
-        frc::DigitalInput turretLimitRight{3};
        
 };
 #endif
