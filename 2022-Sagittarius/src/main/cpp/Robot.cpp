@@ -99,12 +99,12 @@ void Robot::TeleopPeriodic() {
     double targetSkew = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ts", 0.0);
 
     arcadeVelocity.Drive(joystick.GetX(), joystick.GetY(), joystick.GetTwist());
-    Shoot.ElevatorBalls(joystick.GetRawButton(7), joystick.GetRawButton(6));
-    BallIntake.IntakeBalls(joystick.GetRawButton(7), joystick.GetRawButton(8));
-    Pneu.moveIntake(joystick.GetRawButton(7), joystick.GetRawButton(8));
+    Shoot.ElevatorBalls(joystick.GetRawButton(11), joystick.GetRawButton(6), joystick.GetRawButton(9));
+    BallIntake.IntakeBalls(joystick.GetRawButton(11), joystick.GetRawButton(12));
+    Pneu.moveIntake(joystick.GetRawButton(11), joystick.GetRawButton(12));
 
     Shoot.spinrev(joystick.GetRawButton(1), Yoffset);
-    turret.smartMan(joystick.GetRawButton(12), joystick.GetRawButton(11), joystick.GetRawButton(2), Xoffset, Yoffset, targetSkew);
+    turret.smartMan(joystick.GetRawButton(7), joystick.GetRawButton(8), joystick.GetRawButton(2), joystick.GetRawButton(1), Xoffset, Yoffset, targetSkew);
 }
 
 void Robot::DisabledInit() {}

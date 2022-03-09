@@ -29,7 +29,7 @@ void Turret::safetyController(double speed){
     }
 }
 
-void Turret::smartMan(bool left, bool right, bool aimybot, double xPos, double yPos, double skew){
+void Turret::smartMan(bool left, bool right, bool aimybot, bool shooting, double xPos, double yPos, double skew){
 
     d = (h2 - h1)/tan(alpha + (yPos*3.14159265/180));
     
@@ -40,12 +40,12 @@ void Turret::smartMan(bool left, bool right, bool aimybot, double xPos, double y
     else if (left){
         Turret::safetyController(-1); 
     }
-    else if (aimybot){
+    else if (aimybot or shooting){
         //sum = sum - cameraPos*0.0015;
         Turret::safetyController(xPos*0.2 + sum);
     }
     else{
-        Turret::safetyController(0); 
+        Turret::safetyController(0);
     }
 
     /*if (++_loops >= 20) {

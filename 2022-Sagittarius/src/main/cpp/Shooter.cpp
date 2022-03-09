@@ -6,7 +6,7 @@ Shooter::Shooter()
 
 double Shooter::GetPower(double ty){
     double x = (ty-25.3)/(-0.16);
-    double weGotSpeedWeGotPower = 0.93;
+    double weGotSpeedWeGotPower = 0.9;
     double Dwayne = (11.33*x + 1723.81)*weGotSpeedWeGotPower;
     return Dwayne;
 }
@@ -53,16 +53,16 @@ void Shooter::shooterFeed(double speed)
     }
 }
 
-void Shooter::ElevatorBalls(bool ButtThree, bool ButtFour)
+void Shooter::ElevatorBalls(bool ButtThree, bool ButtFour, bool elevator_only)
 {
     if (ButtFour)
     {
         Shooter::shooterFeed(0.2);
     }
-    else if (ButtThree)
+    else if (ButtThree or elevator_only)
     {
         ElevatorIntake.Set(0.4);
-        Shooter::shooterFeed(-0.1);
+        Shooter::shooterFeed(-0.2);
     }
     else{
         Shooter::shooterFeed(0.0);
