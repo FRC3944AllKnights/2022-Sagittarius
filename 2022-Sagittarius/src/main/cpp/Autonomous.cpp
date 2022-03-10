@@ -7,7 +7,7 @@ void Autonomous::init(bool Redsus){
     
     //init encoders
     encoder1.SetDistancePerPulse(ticks2meters);
-    encoder1.SetReverseDirection(true);
+    encoder1.SetReverseDirection(true); //reverse one side of the encoders to make them count the same
     encoder2.SetDistancePerPulse(ticks2meters);
 
     //init trajectory
@@ -53,24 +53,6 @@ void Autonomous::getOdom(){
 	}    
 }
 
-void Autonomous::VelocityControl(units::meters_per_second_t x, units::radians_per_second_t theta){
-    auto speeds = m_kinematics.ToWheelSpeeds({x, 0_mps, theta});
-    vLeft = speeds.left.to<double>()/0.4775*gearRatio*60;
-    vRight = -speeds.right.to<double>()/0.4775*gearRatio*60;
-
-    if (vLeft == 0 && vRight == 0){
-        LOCDrive.frontLeft.Set(0.0);
-        LOCDrive.rearLeft.Set(0.0);
-        LOCDrive.frontRight.Set(0.0);
-        LOCDrive.rearRight.Set(0.0);
-    } else{
-        frontLeftPID.SetReference(vLeft, rev::ControlType::kVelocity);
-        rearLeftPID.SetReference(vLeft, rev::ControlType::kVelocity);
-        frontRightPID.SetReference(vRight, rev::ControlType::kVelocity);
-        rearRightPID.SetReference(vRight, rev::ControlType::kVelocity);
-    }
-}
-
 void Autonomous::GenerateTrajectory(){
     bounceConfig.SetReversed(false);
     bounce1Trajectory = frc::TrajectoryGenerator::GenerateTrajectory(
@@ -78,6 +60,43 @@ void Autonomous::GenerateTrajectory(){
            {frc::Translation2d(70_in, 96_in)}, 
            frc::Pose2d(90_in, 150_in, 90_deg), 
            bounceConfig);
+}
+
+void Autonomous::FollowTrajectory(bool isRed){
+    getOdom();
+    if (isRed){
+       if (m_timer.Get() < redTrajectory.TotalTime()) {
+      // Get the desired pose from the trajectory.
+      auto desiredPose = redTrajectory.Sample(m_timer.Get());
+
+      // Get the reference chassis speeds from the Ramsete Controller.
+      auto refChassisSpeeds =
+          italy.Calculate(pose, desiredPose);
+
+      // Set the linear and angular speeds.
+      ramseteOutputX = desiredPose.pose.Translation().X().to<double>();
+      ramseteOutputTheta = refChassisSpeeds.omega.to<double>();
+      Drive.PureVelocityControl(refChassisSpeeds.vx, refChassisSpeeds.omega);
+      } else {
+        Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+      }
+   } else{
+              if (m_timer.Get() < blueTrajectory.TotalTime()) {
+      // Get the desired pose from the trajectory.
+      auto desiredPose = blueTrajectory.Sample(m_timer.Get());
+
+      // Get the reference chassis speeds from the Ramsete Controller.
+      auto refChassisSpeeds =
+          italy.Calculate(pose, desiredPose);
+
+      // Set the linear and angular speeds.
+      ramseteOutputX = desiredPose.pose.Translation().X().to<double>();
+      ramseteOutputTheta = refChassisSpeeds.omega.to<double>();
+      Drive.PureVelocityControl(refChassisSpeeds.vx, refChassisSpeeds.omega);
+      } else {
+        Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+      }
+   }
 }
 
 

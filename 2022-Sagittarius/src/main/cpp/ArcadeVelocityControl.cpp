@@ -88,3 +88,21 @@ double ArcadeVelocityControl::deadbandremover(double value){
     value = pow(value, 2.0);
     return value*x;
 }
+
+void ArcadeVelocityControl::PureVelocityControl(units::meters_per_second_t x, units::radians_per_second_t theta){
+    auto speeds = m_kinematics.ToWheelSpeeds({x, 0_mps, theta});
+    vLeft = speeds.left.to<double>()/0.4775*gearRatio*60;
+    vRight = -speeds.right.to<double>()/0.4775*gearRatio*60;
+
+    if (vLeft == 0 && vRight == 0){
+        Back_Right.Set(0.0);
+        Back_Left.Set(0.0);
+        Front_Right.Set(0.0);
+        Back_Right.Set(0.0);
+    } else{
+        Front_Left_PID.SetReference(vLeft, rev::ControlType::kVelocity);
+        Back_Left_PID.SetReference(vLeft, rev::ControlType::kVelocity);
+        Front_Right_PID.SetReference(vRight, rev::ControlType::kVelocity);
+        Back_Right_PID.SetReference(vRight, rev::ControlType::kVelocity);
+    }
+}
