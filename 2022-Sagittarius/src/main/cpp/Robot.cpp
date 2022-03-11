@@ -29,6 +29,8 @@
 //shooter left - 21
 //shooter right - 20
 
+bool haspathed = false;
+
 frc::Joystick joystick{0};
 frc::Joystick joystick2{1};
 //ArcadeVelocityControl arcadeVelocity;
@@ -70,6 +72,7 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
+  
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
@@ -78,7 +81,7 @@ void Robot::AutonomousInit() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    // Default Auto goes here
+    autonomous.init(true);
   }
 }
 
@@ -86,7 +89,14 @@ void Robot::AutonomousPeriodic() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    // Default Auto goes here
+    if (haspathed == false){
+      haspathed = autonomous.FollowTrajectory(true);
+      
+    
+    } 
+    else{
+      Shoot.spinrev(true, 0);
+    }
   }
 }
 

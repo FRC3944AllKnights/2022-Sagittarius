@@ -62,7 +62,7 @@ void Autonomous::GenerateTrajectory(){
            bounceConfig);
 }
 
-void Autonomous::FollowTrajectory(bool isRed){
+bool Autonomous::FollowTrajectory(bool isRed){
     getOdom();
     if (isRed){
        if (m_timer.Get() < redTrajectory.TotalTime()) {
@@ -93,10 +93,13 @@ void Autonomous::FollowTrajectory(bool isRed){
       ramseteOutputX = desiredPose.pose.Translation().X().to<double>();
       ramseteOutputTheta = refChassisSpeeds.omega.to<double>();
       Drive.PureVelocityControl(refChassisSpeeds.vx, refChassisSpeeds.omega);
+      return false;
       } else {
         Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+        return true;
       }
    }
+
 }
 
 

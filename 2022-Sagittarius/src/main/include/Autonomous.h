@@ -28,7 +28,7 @@ class Autonomous{
         void getOdom();
         void GenerateTrajectory();
         void DriveAndTurn();
-        void FollowTrajectory(bool isRed);
+        bool FollowTrajectory(bool isRed);
         void FollowBounceTrajectory();
 
         //declaring it here allows the main robot cpp to use it without throwing sparkmax CAN errors
