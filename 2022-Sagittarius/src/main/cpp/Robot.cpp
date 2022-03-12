@@ -90,7 +90,7 @@ void Robot::AutonomousPeriodic() {
     // Custom Auto goes here
   } else {
     
-      haspathed = autonomous.FollowTrajectory(true);
+      autonomous.FollowTrajectory(true);
       
     
     
