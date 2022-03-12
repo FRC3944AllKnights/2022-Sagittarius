@@ -2,11 +2,15 @@
 #define ARCADEVELOCITYCONTROL_H
 #include <cmath>
 #include <rev/CANSparkMax.h>
+#include "frc/kinematics/DifferentialDriveKinematics.h"
+#include <wpi/fs.h>
+
 
 class ArcadeVelocityControl{
     public:
         ArcadeVelocityControl();
         void Drive(double X, double Y, double Twist);
+        void PureVelocityControl(units::meters_per_second_t x, units::radians_per_second_t theta);
         void DriveInit();
 
     private:
@@ -15,6 +19,9 @@ class ArcadeVelocityControl{
         //gear ratio
         double gearRatio = 10.75;
         double wheelCircumference = 0.479;
+        double vLeft;
+        double vRight;
+        frc::DifferentialDriveKinematics m_kinematics{0.6_m};
 
         rev::CANSparkMax Back_Right{3, rev::CANSparkMax::MotorType::kBrushless};
         rev::CANSparkMax Back_Left{4, rev::CANSparkMax::MotorType::kBrushless};
@@ -45,6 +52,7 @@ class ArcadeVelocityControl{
 
         rev::SparkMaxPIDController Front_Left_PID = Front_Left.GetPIDController();
         rev::SparkMaxRelativeEncoder Front_Left_encoder = Front_Left.GetEncoder();
+
 };
 
 #endif
