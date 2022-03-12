@@ -29,6 +29,8 @@
 //shooter left - 21
 //shooter right - 20
 
+bool haspathed = false;
+
 frc::Joystick joystick{0};
 frc::Joystick joystick2{1};
 ArcadeVelocityControl arcadeVelocity;
