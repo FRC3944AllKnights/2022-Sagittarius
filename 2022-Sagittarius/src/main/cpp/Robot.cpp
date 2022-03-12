@@ -89,14 +89,13 @@ void Robot::AutonomousPeriodic() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    if (haspathed == false){
+    
       haspathed = autonomous.FollowTrajectory(true);
       
     
-    } 
-    else{
-      Shoot.spinrev(true, 0);
-    }
+    
+ 
+    
   }
 }
 
