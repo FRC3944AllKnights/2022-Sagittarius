@@ -38,6 +38,7 @@ Intake BallIntake;
 Shooter Shoot;
 Pneumatics Pneu;
 Turret turret;
+Autonomous autonomous;
 
 void Robot::RobotInit() {
     m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
