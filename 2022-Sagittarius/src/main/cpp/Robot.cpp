@@ -80,7 +80,7 @@ void Robot::AutonomousInit() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    // Default Auto goes here
+    autonomous.init(true);
   }
 }
 
