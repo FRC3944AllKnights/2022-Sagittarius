@@ -19,45 +19,46 @@
 #include <wpi/fs.h>
 #include <wpi/SmallString.h>
 
-class Encoder{
+#include "ArcadeVelocityControl.h"
+
+class Autonomous{
     public:
-        Encoder();
+        Autonomous();
         void init(bool isRed);
         void getOdom();
         void GenerateTrajectory();
         void DriveAndTurn();
-        void FollowTrajectory(bool isRed);
+        bool FollowTrajectory(bool isRed);
         void FollowBounceTrajectory();
-        void VelocityControl(units::meters_per_second_t x, units::radians_per_second_t theta);
+
+        //declaring it here allows the main robot cpp to use it without throwing sparkmax CAN errors
+        ArcadeVelocityControl Drive;
 
     private:
         int pin1, pin2, name;
         std::string _sb;
         int _loops = 0;
         double ticks2meters = 1/360.0*.4775;
-        frc::Encoder encoder1{6,7};
-        frc::Encoder encoder2{8,9};
-        //AHRS *ahrs;
-        //ahrs = new AHRS(frc::I2C::Port::kMXP);
-        AHRS ahrs{frc::I2C::Port::kMXP};
+        frc::Encoder encoder1{0,1}; //initialize encoders attached to the RIO (possibly needs inverting)
+        frc::Encoder encoder2{2,3};
+        AHRS ahrs{frc::I2C::Port::kMXP}; //initialize NavX on the RIO
         frc::Rotation2d gyroAngle{units::degree_t(ahrs.GetAngle())};
         frc::Pose2d pose;
         frc::DifferentialDriveOdometry odom{gyroAngle};
 
-        double kP = 9e-5, kI = 1e-7, kD = 0, kIz = 0, kFF = 0.000015, kMaxOutput = 1.0, kMinOutput = -1.0;
         const double MaxRPM = 5700;
         double gearRatio = 10.75;
         double vLeft;
         double vRight;
-        frc::DifferentialDriveKinematics m_kinematics{0.622_m};
+        frc::DifferentialDriveKinematics m_kinematics{0.6_m};
 
         //ramsete
         frc::RamseteController italy{2.0, 0.7};
         frc::Timer m_timer;
 
         //trajectory
-        frc::Trajectory redTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/Jorgy.wpilib.json");
-        frc::Trajectory blueTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/Jorgy.wpilib.json");
+        frc::Trajectory redTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/test.wpilib.json");
+        frc::Trajectory blueTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/test.wpilib.json");
         
         bool bounce1go = false;
         bool bounce2go = false;
