@@ -89,7 +89,7 @@ void Robot::AutonomousPeriodic() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    
+      //sus amongus lmao limphaow 
       autonomous.FollowTrajectory(true);
       
     
