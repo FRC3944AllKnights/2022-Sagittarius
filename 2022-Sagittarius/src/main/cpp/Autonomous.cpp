@@ -17,9 +17,9 @@ void Autonomous::init(bool Redsus){
     pose = {units::meter_t(0), units::meter_t(0), gyroAngle};
     gyroAngle = {units::degree_t(-ahrs.GetAngle())};
     if (Redsus){
-      odom.ResetPosition(redTrajectory.InitialPose(), gyroAngle);
+        odom.ResetPosition(blue1.InitialPose(), gyroAngle);
     }else{
-        odom.ResetPosition(blueTrajectory.InitialPose(), gyroAngle);
+        odom.ResetPosition(blue1.InitialPose(), gyroAngle);
     }
     m_timer.Start();
 
@@ -40,7 +40,7 @@ void Autonomous::getOdom(){
         _sb.append(" Y: ");
         _sb.append(std::to_string(pose.Translation().Y().to<double>()));
         _sb.append(" Theta: ");
-        _sb.append(std::to_string(pose.Rotation().Radians().to<double>()));
+        _sb.append(std::to_string(gyroAngle.Radians().to<double>()));
         _sb.append(" vLeft ");
         _sb.append(std::to_string(vLeft));
         _sb.append(" vRight ");
@@ -50,11 +50,11 @@ void Autonomous::getOdom(){
 	}    
 }
 
-bool Autonomous::FollowTrajectory(bool isRed){
+bool Autonomous::FollowTrajectory(frc::Trajectory trajectory){
     getOdom();
-    if (m_timer.Get() < blueTrajectory.TotalTime()) {
+    if (m_timer.Get() < trajectory.TotalTime()) {
       // Get the desired pose from the trajectory.
-        auto desiredPose = redTrajectory.Sample(m_timer.Get());
+      auto desiredPose = trajectory.Sample(m_timer.Get());
 
       // Get the reference chassis speeds from the Ramsete Controller.
       auto refChassisSpeeds = italy.Calculate(pose, desiredPose);
@@ -72,9 +72,21 @@ bool Autonomous::FollowTrajectory(bool isRed){
 
 bool Autonomous::TurnRight(double angle){
   getOdom();
-  double initialPose = pose.Rotation().Radians().to<double>();
-  while(pose.Rotation().Radians().to<double>() - initialPose < angle){
-    Drive.PureVelocityControl(0_mps, -3_rad_per_s);
+  double initialPose = gyroAngle.Radians().to<double>();
+  while(-(gyroAngle.Radians().to<double>() - initialPose) < angle){
+    Drive.PureVelocityControl(0_mps, -6_rad_per_s);
+    //Drive.Drive(0.0, 0.3, 0.0);
+    getOdom();
+  }
+  Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+  return true;
+}
+
+bool Autonomous::TurnLeft(double angle){
+  getOdom();
+  double initialPose = gyroAngle.Radians().to<double>();
+  while((gyroAngle.Radians().to<double>() - initialPose) < angle){
+    Drive.PureVelocityControl(0_mps, 6_rad_per_s);
     //Drive.Drive(0.0, 0.3, 0.0);
     getOdom();
   }

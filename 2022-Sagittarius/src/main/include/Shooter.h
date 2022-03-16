@@ -12,7 +12,7 @@ class Shooter{
     public:
         Shooter();
         void init();
-        void spinrev(bool revUp, double ty); // bool up1, bool down1, bool up2, bool down2, bool revUp);
+        bool spinrev(bool revUp, double ty); // bool up1, bool down1, bool up2, bool down2, bool revUp);
         void ElevatorBalls(bool ButtThree, bool ButtFour);
         void shooterFeed(double speed);
         double GetPower(double ty);
@@ -34,6 +34,8 @@ class Shooter{
         rev::SparkMaxRelativeEncoder shooterRightEncoder = shooterRight.GetEncoder();
 
         double lastSpeed = 0.0;
+        bool elevatorClear = true;
+        int elevatorClearCount = 0;
         bool isShooting = false;
         rev::CANSparkMax ElevatorIntake{8, rev::CANSparkMax::MotorType::kBrushless};
         rev::CANSparkMax ElevatorOuttake{7, rev::CANSparkMax::MotorType::kBrushless};

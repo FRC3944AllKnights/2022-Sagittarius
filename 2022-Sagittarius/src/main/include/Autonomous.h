@@ -29,8 +29,12 @@ class Autonomous{
         void GenerateTrajectory();
         bool TurnLeft(double angle);
         bool TurnRight(double angle);
-        bool FollowTrajectory(bool isRed);
+        bool FollowTrajectory(frc::Trajectory trajectory);
         void FollowBounceTrajectory();
+
+        frc::Trajectory blue1 = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
+        frc::Trajectory blue2 = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2to4blue.wpilib.json");
+        frc::Timer m_timer;
 
         //declaring it here allows the main robot cpp to use it without throwing sparkmax CAN errors
         ArcadeVelocityControl Drive;
@@ -55,11 +59,6 @@ class Autonomous{
 
         //ramsete
         frc::RamseteController italy{2.0, 0.7};
-        frc::Timer m_timer;
-
-        //trajectory
-        frc::Trajectory redTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
-        frc::Trajectory blueTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
 
         //print variables
         double ramseteOutputX;

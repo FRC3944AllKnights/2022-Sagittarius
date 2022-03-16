@@ -42,8 +42,17 @@ void Shooter::shooterFeed(double speed)
 {
     if(isShooting){
         ElevatorOuttake.Set(-1.0);
+        if(elevatorSwitch.Get()){
+            elevatorClear = true;
+            elevatorClearCount = elevatorClearCount + 1;
+        }
+        else{
+            elevatorClear = false;
+            elevatorClearCount = 0;
+        }
     }
     else{
+        elevatorClearCount = 0;
         if(elevatorSwitch.Get() == false){
             ElevatorOuttake.Set(0);
         }
@@ -61,8 +70,19 @@ void Shooter::ElevatorBalls(bool ButtThree, bool ButtFour)
     }
     else if (ButtThree)
     {
-        ElevatorIntake.Set(0.4);
-        Shooter::shooterFeed(-0.1);
+        if(isShooting){
+            if(elevatorClearCount > 5){
+                ElevatorIntake.Set(0.4);
+                Shooter::shooterFeed(-0.1);
+            }
+            else{
+                Shooter::shooterFeed(-0.1);
+            }
+        }
+        else{
+            ElevatorIntake.Set(0.4);
+            Shooter::shooterFeed(-0.1);
+        }
     }
     else{
         Shooter::shooterFeed(0.0);
@@ -70,7 +90,7 @@ void Shooter::ElevatorBalls(bool ButtThree, bool ButtFour)
     }
 }
 
-void Shooter::spinrev(bool revUp, double ty)
+bool Shooter::spinrev(bool revUp, double ty)
 {
     if (revUp)
     {
@@ -87,6 +107,12 @@ void Shooter::spinrev(bool revUp, double ty)
         {
             isShooting = false;
         }
+        if(elevatorClearCount > 10){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     else
     {
@@ -94,7 +120,7 @@ void Shooter::spinrev(bool revUp, double ty)
         shooterLeft.Set(0);
     }
 
-    if (++_loops >= 20)
+    /*if (++_loops >= 20)
     {
         _loops = 0;
         _sb.append("\tV1:");
@@ -106,5 +132,5 @@ void Shooter::spinrev(bool revUp, double ty)
 
         printf("%s\n", _sb.c_str());
         _sb.clear();
-    }
+    }*/
 }
