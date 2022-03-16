@@ -27,7 +27,8 @@ class Autonomous{
         void init(bool isRed);
         void getOdom();
         void GenerateTrajectory();
-        void DriveAndTurn();
+        bool TurnLeft(double angle);
+        bool TurnRight(double angle);
         bool FollowTrajectory(bool isRed);
         void FollowBounceTrajectory();
 
@@ -39,8 +40,8 @@ class Autonomous{
         std::string _sb;
         int _loops = 0;
         double ticks2meters = 1/360.0*.4775;
-        frc::Encoder encoder1{0,1}; //initialize encoders attached to the RIO (possibly needs inverting)
-        frc::Encoder encoder2{2,3};
+        frc::Encoder encoder1{2,3}; //initialize encoders attached to the RIO (possibly needs inverting)
+        frc::Encoder encoder2{0,1};
         AHRS ahrs{frc::I2C::Port::kMXP}; //initialize NavX on the RIO
         frc::Rotation2d gyroAngle{units::degree_t(ahrs.GetAngle())};
         frc::Pose2d pose;
@@ -57,26 +58,8 @@ class Autonomous{
         frc::Timer m_timer;
 
         //trajectory
-        frc::Trajectory redTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/test.wpilib.json");
-        frc::Trajectory blueTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/test.wpilib.json");
-        
-        bool bounce1go = false;
-        bool bounce2go = false;
-        bool bounce3go = false;
-        bool bounce4go = false;
-
-        frc::Trajectory simpleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-           frc::Pose2d(30_in, 30_in, 0_deg),
-           {frc::Translation2d(85_in, 60_in), frc::Translation2d(105_in, 85_in), frc::Translation2d(220_in, 90_in), frc::Translation2d(250_in, 85_in),
-           frc::Translation2d(260_in, 70_in), frc::Translation2d(275_in, 60_in), frc::Translation2d(300_in, 30_in), frc::Translation2d(330_in, 60_in),
-           frc::Translation2d(300_in, 90_in), frc::Translation2d(274_in, 60_in), frc::Translation2d(220_in, 30_in), frc::Translation2d(160_in, 20_in), frc::Translation2d(120_in, 15_in),
-           frc::Translation2d(60_in, 90_in)}, frc::Pose2d(30_in, 85_in, 180_deg), frc::TrajectoryConfig(1.4_mps, 1_mps_sq));
-
-        frc::TrajectoryConfig bounceConfig{0.5_mps, 1_mps_sq};
-        frc::Trajectory bounce1Trajectory;
-        frc::Trajectory bounce2Trajectory;
-        frc::Trajectory bounce3Trajectory;
-        frc::Trajectory bounce4Trajectory;
+        frc::Trajectory redTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
+        frc::Trajectory blueTrajectory = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
 
         //print variables
         double ramseteOutputX;

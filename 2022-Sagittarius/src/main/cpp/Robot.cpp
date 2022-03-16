@@ -29,7 +29,7 @@
 //shooter left - 21
 //shooter right - 20
 
-bool haspathed = false;
+bool didfirstpath, didfirstturn = false;
 
 frc::Joystick joystick{0};
 frc::Joystick joystick2{1};
@@ -89,14 +89,27 @@ void Robot::AutonomousPeriodic() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-      //sus amongus lmao limphaow 
-      autonomous.FollowTrajectory(true);
-      
-      
-    
-    
- 
-    
+    if (didfirstpath == false){
+      turret.smartMan(false, true, false, 0, 0, 0);
+      Pneu.moveIntake(true, false);
+      BallIntake.IntakeBalls(true, false);
+      Shoot.ElevatorBalls(true, false);
+      didfirstpath = autonomous.FollowTrajectory(true);
+    } 
+    else if(didfirstturn == false){
+      turret.smartMan(false, false, false, 0, 0, 0);
+      didfirstturn = autonomous.TurnRight(1.5);
+      Pneu.moveIntake(false, true);
+      BallIntake.IntakeBalls(false, false);
+    }
+    else{
+      autonomous.Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+      double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
+      double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
+      Shoot.ElevatorBalls(true, false);
+      turret.smartMan(false, false, true, Xoffset, Yoffset, 0);
+      Shoot.spinrev(true, Yoffset);
+    }
   }
 }
 
