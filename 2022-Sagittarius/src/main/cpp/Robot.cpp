@@ -29,7 +29,8 @@
 //shooter left - 21
 //shooter right - 20
 
-bool didfirstpath, didfirstturn, didfirstshoot, didsecondpath = false;
+bool didpath, didturn, didshoot = false;
+int autoSequence = 1;
 
 frc::Joystick joystick{0};
 frc::Joystick joystick2{1};
@@ -81,56 +82,74 @@ void Robot::AutonomousInit() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    didfirstpath = false;
-    didfirstturn = false;
-    didfirstshoot = false;
-    didsecondpath = false;
+    autoSequence = 1;
     autonomous.init(true);
   }
+}
+
+void reset(){
+    turret.smartMan(false, false, false, false, 0, 0, 0);
+    autonomous.Drive.PureVelocityControl(0_mps, 0_rad_per_s);
+    BallIntake.IntakeBalls(false, false);
+    Shoot.ElevatorBalls(false, false, false);
+    Shoot.spinrev(false, 0);
+    autonomous.m_timer.Reset();
+}
+
+void blue2balls(){
+    switch(autoSequence){
+      case 1:{
+        turret.smartMan(false, true, false, false, 0, 0, 0);
+        Pneu.moveIntake(true, false);
+        BallIntake.IntakeBalls(true, false);
+        Shoot.ElevatorBalls(true, false, false);
+        didpath = autonomous.FollowTrajectory(autonomous.blue1);
+        if(didpath){
+          didpath = autonomous.TurnRight(1.3);
+          reset();
+          Pneu.moveIntake(false, true);
+          autoSequence = 2;
+        }
+        break;
+      }
+      case 2:{
+        double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
+        double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
+        Shoot.ElevatorBalls(true, false, false);
+        turret.smartMan(false, false, true, false, Xoffset, Yoffset, 0);
+        didshoot = Shoot.spinrev(true, Yoffset);
+        if(didshoot){
+          reset();
+          didturn = autonomous.TurnLeft(1.3);
+          autoSequence = 3;
+        }
+        break;
+      }
+      case 3:{
+        turret.smartMan(false, true, false, false, 0, 0, 0);
+        Shoot.ElevatorBalls(true, false, false);
+        Pneu.moveIntake(true, false);
+        BallIntake.IntakeBalls(true, false);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2);
+        if(didpath){
+          reset();
+          autoSequence = 4;
+        }
+        break;
+      }
+      default:{
+        reset();
+        Pneu.moveIntake(false, true);
+        break;
+      }
+    }
 }
 
 void Robot::AutonomousPeriodic() {
   if (m_autoSelected == kAutoNameCustom) {
     // Custom Auto goes here
   } else {
-    if (didfirstpath == false){
-      turret.smartMan(false, true, false, false, 0, 0, 0);
-      Pneu.moveIntake(true, false);
-      BallIntake.IntakeBalls(true, false);
-      Shoot.ElevatorBalls(true, false, false);
-      didfirstpath = autonomous.FollowTrajectory(autonomous.blue1);
-    } 
-    else if(didfirstturn == false){
-      turret.smartMan(false, false, false, false, 0, 0, 0);
-      didfirstturn = autonomous.TurnRight(1.3);
-      Pneu.moveIntake(false, true);
-      BallIntake.IntakeBalls(false, false);
-    }
-    else if(didfirstshoot == false){
-      autonomous.Drive.PureVelocityControl(0_mps, 0_rad_per_s);
-      double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
-      double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
-      Shoot.ElevatorBalls(true, false, false);
-      turret.smartMan(false, false, true, false, Xoffset, Yoffset, 0);
-      didfirstshoot = Shoot.spinrev(true, Yoffset);
-      if(didfirstshoot){
-        Shoot.ElevatorBalls(false, false, false);
-        turret.smartMan(false, false, false, false, Xoffset, Yoffset, 0);
-        didfirstshoot = autonomous.TurnLeft(1.3);
-        autonomous.m_timer.Reset();
-      }
-    }
-    else if(didsecondpath == false){
-      Shoot.spinrev(false, 0);
-      turret.smartMan(false, true, false, false, 0, 0, 0);
-      autonomous.FollowTrajectory(autonomous.blue2);
-      Shoot.ElevatorBalls(true, false, false);
-      Pneu.moveIntake(true, false);
-      BallIntake.IntakeBalls(true, false);
-    }
-    else{
-
-    }
+    blue2balls();
   }
 }
 
