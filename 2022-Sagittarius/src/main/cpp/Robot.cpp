@@ -94,14 +94,14 @@ void Robot::AutonomousPeriodic() {
     // Custom Auto goes here
   } else {
     if (didfirstpath == false){
-      turret.smartMan(false, true, false, 0, 0, 0);
+      turret.smartMan(false, true, false, false, 0, 0, 0);
       Pneu.moveIntake(true, false);
       BallIntake.IntakeBalls(true, false);
       Shoot.ElevatorBalls(true, false, false);
       didfirstpath = autonomous.FollowTrajectory(autonomous.blue1);
     } 
     else if(didfirstturn == false){
-      turret.smartMan(false, false, false, 0, 0, 0);
+      turret.smartMan(false, false, false, false, 0, 0, 0);
       didfirstturn = autonomous.TurnRight(1.3);
       Pneu.moveIntake(false, true);
       BallIntake.IntakeBalls(false, false);
@@ -111,20 +111,20 @@ void Robot::AutonomousPeriodic() {
       double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
       double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
       Shoot.ElevatorBalls(true, false, false);
-      turret.smartMan(false, false, true, Xoffset, Yoffset, 0);
+      turret.smartMan(false, false, true, false, Xoffset, Yoffset, 0);
       didfirstshoot = Shoot.spinrev(true, Yoffset);
       if(didfirstshoot){
         Shoot.ElevatorBalls(false, false, false);
-        turret.smartMan(false, false, false, Xoffset, Yoffset, 0);
+        turret.smartMan(false, false, false, false, Xoffset, Yoffset, 0);
         didfirstshoot = autonomous.TurnLeft(1.3);
         autonomous.m_timer.Reset();
       }
     }
     else if(didsecondpath == false){
       Shoot.spinrev(false, 0);
-      turret.smartMan(false, true, false, 0, 0, 0);
+      turret.smartMan(false, true, false, false, 0, 0, 0);
       autonomous.FollowTrajectory(autonomous.blue2);
-      Shoot.ElevatorBalls(true, false);
+      Shoot.ElevatorBalls(true, false, false);
       Pneu.moveIntake(true, false);
       BallIntake.IntakeBalls(true, false);
     }
