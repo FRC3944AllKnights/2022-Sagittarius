@@ -97,7 +97,7 @@ void Robot::AutonomousPeriodic() {
       turret.smartMan(false, true, false, 0, 0, 0);
       Pneu.moveIntake(true, false);
       BallIntake.IntakeBalls(true, false);
-      Shoot.ElevatorBalls(true, false);
+      Shoot.ElevatorBalls(true, false, false);
       didfirstpath = autonomous.FollowTrajectory(autonomous.blue1);
     } 
     else if(didfirstturn == false){
@@ -110,11 +110,11 @@ void Robot::AutonomousPeriodic() {
       autonomous.Drive.PureVelocityControl(0_mps, 0_rad_per_s);
       double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
       double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
-      Shoot.ElevatorBalls(true, false);
+      Shoot.ElevatorBalls(true, false, false);
       turret.smartMan(false, false, true, Xoffset, Yoffset, 0);
       didfirstshoot = Shoot.spinrev(true, Yoffset);
       if(didfirstshoot){
-        Shoot.ElevatorBalls(false, false);
+        Shoot.ElevatorBalls(false, false, false);
         turret.smartMan(false, false, false, Xoffset, Yoffset, 0);
         didfirstshoot = autonomous.TurnLeft(1.3);
         autonomous.m_timer.Reset();
@@ -145,12 +145,12 @@ void Robot::TeleopPeriodic() {
     double targetSkew = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ts", 0.0);
 
     autonomous.Drive.Drive(joystick.GetX(), joystick.GetY(), joystick.GetTwist());
-    Shoot.ElevatorBalls(joystick.GetRawButton(7), joystick.GetRawButton(6));
-    BallIntake.IntakeBalls(joystick.GetRawButton(7), joystick.GetRawButton(8));
-    Pneu.moveIntake(joystick.GetRawButton(7), joystick.GetRawButton(8));
+    Shoot.ElevatorBalls(joystick.GetRawButton(11), joystick.GetRawButton(6), joystick.GetRawButton(9));
+    BallIntake.IntakeBalls(joystick.GetRawButton(11), joystick.GetRawButton(12));
+    Pneu.moveIntake(joystick.GetRawButton(11), joystick.GetRawButton(12));
 
     Shoot.spinrev(joystick.GetRawButton(1), Yoffset);
-    turret.smartMan(joystick.GetRawButton(12), joystick.GetRawButton(11), joystick.GetRawButton(2), Xoffset, Yoffset, targetSkew);
+    turret.smartMan(joystick.GetRawButton(7), joystick.GetRawButton(8), joystick.GetRawButton(2), joystick.GetRawButton(1), Xoffset, Yoffset, targetSkew);
 }
 
 void Robot::DisabledInit() {}

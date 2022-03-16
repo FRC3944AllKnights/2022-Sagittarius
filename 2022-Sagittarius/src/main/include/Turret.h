@@ -10,7 +10,7 @@ class Turret{
     public:
         Turret();
         void init();
-        void smartMan(bool left, bool right, bool aimybot, double xPos, double yPos, double skew);
+        void smartMan(bool left, bool right, bool aimybot, bool shooting, double xPos, double yPos, double skew);
         void safetyController(double speed);
         std::string _sb;
 	    int _loops = 0;
