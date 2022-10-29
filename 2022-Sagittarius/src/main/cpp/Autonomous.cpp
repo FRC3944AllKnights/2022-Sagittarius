@@ -3,7 +3,7 @@
 
 Autonomous::Autonomous(){}
 
-void Autonomous::init(bool Redsus){
+void Autonomous::init(frc::Trajectory trajectory){
     
     //init encoders
     encoder1.SetDistancePerPulse(ticks2meters);
@@ -13,16 +13,13 @@ void Autonomous::init(bool Redsus){
      //init odom
     encoder1.Reset();
     encoder2.Reset();
+    
     gyroAngle = {units::degree_t(0)};
     pose = {units::meter_t(0), units::meter_t(0), gyroAngle};
     gyroAngle = {units::degree_t(-ahrs.GetAngle())};
-    if (Redsus){
-        odom.ResetPosition(blue1.InitialPose(), gyroAngle);
-    }else{
-        odom.ResetPosition(blue1.InitialPose(), gyroAngle);
-    }
-    m_timer.Start();
 
+    odom.ResetPosition(trajectory.InitialPose(), gyroAngle);
+    m_timer.Start();
     m_timer.Reset();
 }
 

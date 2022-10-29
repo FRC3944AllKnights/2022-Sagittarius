@@ -13,6 +13,7 @@ class Shooter{
         Shooter();
         void init();
         bool spinrev(bool revUp, double ty); // bool up1, bool down1, bool up2, bool down2, bool revUp);
+        void ChangePower(bool up, bool down);
         void ElevatorBalls(bool ButtThree, bool ButtFour, bool elevator_only);
         void shooterFeed(double speed);
         double GetPower(double ty);
@@ -37,6 +38,11 @@ class Shooter{
         bool elevatorClear = true;
         int elevatorClearCount = 0;
         bool isShooting = false;
+
+        double weGotSpeedWeGotPower = 0.92;
+        bool upPressed = false;
+        bool downPressed = false;
+
         rev::CANSparkMax ElevatorIntake{8, rev::CANSparkMax::MotorType::kBrushless};
         rev::CANSparkMax ElevatorOuttake{7, rev::CANSparkMax::MotorType::kBrushless};
 

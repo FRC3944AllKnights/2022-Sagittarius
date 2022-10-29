@@ -6,9 +6,26 @@ Shooter::Shooter()
 
 double Shooter::GetPower(double ty){
     double x = (ty-25.3)/(-0.16);
-    double weGotSpeedWeGotPower = 0.9;
     double Dwayne = (11.33*x + 1723.81)*weGotSpeedWeGotPower;
     return Dwayne;
+}
+
+void Shooter::ChangePower(bool up, bool down){
+    if (up && upPressed == false){
+        upPressed = true;
+        weGotSpeedWeGotPower += 0.003;
+    }
+    else if (up == false && upPressed){
+        upPressed = false;
+    }
+
+    if (down && downPressed == false){
+        downPressed = true;
+        weGotSpeedWeGotPower -= 0.003;
+    }
+    else if (down == false && downPressed){
+        downPressed = false;
+    }
 }
 
 void Shooter::init()
@@ -41,7 +58,7 @@ void Shooter::init()
 void Shooter::shooterFeed(double speed)
 {
     if(isShooting){
-        ElevatorOuttake.Set(-1.0);
+        ElevatorOuttake.Set(-0.7);
         if(elevatorSwitch.Get()){
             elevatorClear = true;
             elevatorClearCount = elevatorClearCount + 1;
@@ -71,22 +88,35 @@ void Shooter::ElevatorBalls(bool ButtThree, bool ButtFour, bool elevator_only)
     else if (ButtThree or elevator_only)
     {
         if(isShooting){
-            if(elevatorClearCount > 5){
+            if(elevatorClearCount > 10){
                 ElevatorIntake.Set(0.4);
-                Shooter::shooterFeed(-0.1);
+                Shooter::shooterFeed(-0.2);
             }
             else{
-                Shooter::shooterFeed(-0.1);
+                Shooter::shooterFeed(-0.2);
             }
         }
         else{
-            ElevatorIntake.Set(0.4);
-            Shooter::shooterFeed(-0.1);
+            if(elevatorSwitch.Get()){
+                ElevatorIntake.Set(0.4);
+            }
+            Shooter::shooterFeed(-0.2);
         }
     }
     else{
-        Shooter::shooterFeed(0.0);
-        ElevatorIntake.Set(0);
+        if(isShooting){
+            if(elevatorClearCount > 10){
+                ElevatorIntake.Set(0.4);
+                Shooter::shooterFeed(-0.2);
+            }
+            else{
+                Shooter::shooterFeed(-0.2);
+            }
+        }
+        else{
+            Shooter::shooterFeed(0.0);
+            ElevatorIntake.Set(0);
+        }
     }
 }
 
@@ -107,7 +137,7 @@ bool Shooter::spinrev(bool revUp, double ty)
         {
             isShooting = false;
         }
-        if(elevatorClearCount > 10){
+        if(elevatorClearCount > 50){
             return true;
         }
         else{
@@ -120,17 +150,14 @@ bool Shooter::spinrev(bool revUp, double ty)
         shooterLeft.Set(0);
     }
 
-    /*if (++_loops >= 20)
+    if (++_loops >= 20)
     {
         _loops = 0;
         _sb.append("\tV1:");
         _sb.append(std::to_string(velocity1));
         _sb.append("\tspd1:");
-        _sb.append(std::to_string(shooterRightEncoder.GetVelocity()));
-        _sb.append("\tspd2:");
-        _sb.append(std::to_string(shooterLeftEncoder.GetVelocity()));
-
+        _sb.append(std::to_string(elevatorSwitch.Get()));
         printf("%s\n", _sb.c_str());
         _sb.clear();
-    }*/
+    }
 }

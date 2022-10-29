@@ -10,7 +10,7 @@ void Turret::init(){
 
 void Turret::safetyController(double speed){
     int encoder = turretSpinner.GetSelectedSensorPosition();
-    int limit = 1200;
+    int limit = 1000;
     if(speed > 0){
         if(encoder <= limit){//turretLimitRight.Get()){
             turretSpinner.Set(ControlMode::PercentOutput, speed);
@@ -42,7 +42,7 @@ void Turret::smartMan(bool left, bool right, bool aimybot, bool shooting, double
     }
     else if (aimybot or shooting){
         //sum = sum - cameraPos*0.0015;
-        Turret::safetyController(xPos*0.2 + sum);
+        Turret::safetyController((xPos + 2.0)*0.2 + sum);
     }
     else{
         Turret::safetyController(0);

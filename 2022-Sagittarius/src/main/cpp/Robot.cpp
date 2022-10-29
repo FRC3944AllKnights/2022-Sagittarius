@@ -4,7 +4,7 @@
 
 #include "Robot.h"
 #include <fmt/core.h>
-#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/Joystick.h>
 
 #include "networktables/NetworkTable.h"
@@ -42,9 +42,13 @@ Turret turret;
 Autonomous autonomous;
 
 void Robot::RobotInit() {
+    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",1);
     m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-    m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-    frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+    m_chooser.AddOption("2_ball_generic", "2_ball_generic");
+    m_chooser.AddOption("2_ball_to_feeder_blue", "2_ball_to_feeder_blue");
+    m_chooser.AddOption("4_ball_blue", "4_ball_blue");
+    m_chooser.AddOption("3_ball_blue", "3_ball_blue");
+    frc::Shuffleboard::GetTab("SmartDashboard").Add("Auto Modes", &m_chooser);
 
     autonomous.Drive.DriveInit();
     Shoot.init();
@@ -59,7 +63,9 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",3);
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -73,17 +79,18 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  
+  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",3);
   m_autoSelected = m_chooser.GetSelected();
   // m_autoSelected = SmartDashboard::GetString("Auto Selector",
   //     kAutoNameDefault);
   fmt::print("Auto selected: {}\n", m_autoSelected);
 
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
+  if (m_autoSelected == "2_ball_generic" or m_autoSelected == "2_ball_to_feeder_blue") {
+    autoSequence = 1;
+    autonomous.init(autonomous.blue2ball);
   } else {
     autoSequence = 1;
-    autonomous.init(true);
+    autonomous.init(autonomous.blue2ball);
   }
 }
 
@@ -103,7 +110,44 @@ void blue2balls(){
         Pneu.moveIntake(true, false);
         BallIntake.IntakeBalls(true, false);
         Shoot.ElevatorBalls(true, false, false);
-        didpath = autonomous.FollowTrajectory(autonomous.blue1);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2ball);
+        if(didpath){
+          didpath = autonomous.TurnRight(1.3);
+          reset();
+          //Pneu.moveIntake(false, true);
+          autoSequence = 2;
+        }
+        break;
+      }
+      case 2:{
+        BallIntake.IntakeBalls(true, false);
+        double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
+        double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
+        Shoot.ElevatorBalls(true, false, false);
+        turret.smartMan(false, false, true, false, Xoffset, Yoffset, 0);
+        didshoot = Shoot.spinrev(true, Yoffset);
+        if(didshoot){
+          reset();
+          autoSequence = 3;
+        }
+        break;
+      }
+      default:{
+        reset();
+        Pneu.moveIntake(false, true);
+        break;
+      }
+    }
+}
+
+void blue2ballsToFeeder(){
+    switch(autoSequence){
+      case 1:{
+        turret.smartMan(false, true, false, false, 0, 0, 0);
+        Pneu.moveIntake(true, false);
+        BallIntake.IntakeBalls(true, false);
+        Shoot.ElevatorBalls(true, false, false);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2ball);
         if(didpath){
           didpath = autonomous.TurnRight(1.3);
           reset();
@@ -130,7 +174,56 @@ void blue2balls(){
         Shoot.ElevatorBalls(true, false, false);
         Pneu.moveIntake(true, false);
         BallIntake.IntakeBalls(true, false);
-        didpath = autonomous.FollowTrajectory(autonomous.blue2);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2balltofeeder);
+        if(didpath){
+          reset();
+          autoSequence = 4;
+        }
+        break;
+      }
+      default:{
+        reset();
+        Pneu.moveIntake(false, true);
+        break;
+      }
+    }
+}
+
+void blue4balls(){
+    switch(autoSequence){
+      case 1:{
+        turret.smartMan(false, true, false, false, 0, 0, 0);
+        Pneu.moveIntake(true, false);
+        BallIntake.IntakeBalls(true, false);
+        Shoot.ElevatorBalls(true, false, false);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2ball);
+        if(didpath){
+          didpath = autonomous.TurnRight(1.3);
+          reset();
+          Pneu.moveIntake(false, true);
+          autoSequence = 2;
+        }
+        break;
+      }
+      case 2:{
+        double Xoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("tx", 0.0);
+        double Yoffset = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumber("ty", 0.0);
+        Shoot.ElevatorBalls(true, false, false);
+        turret.smartMan(false, false, true, false, Xoffset, Yoffset, 0);
+        didshoot = Shoot.spinrev(true, Yoffset);
+        if(didshoot){
+          reset();
+          didturn = autonomous.TurnLeft(1.3);
+          autoSequence = 3;
+        }
+        break;
+      }
+      case 3:{
+        turret.smartMan(false, true, false, false, 0, 0, 0);
+        Shoot.ElevatorBalls(true, false, false);
+        Pneu.moveIntake(true, false);
+        BallIntake.IntakeBalls(true, false);
+        didpath = autonomous.FollowTrajectory(autonomous.blue2balltofeeder);
         if(didpath){
           reset();
           autoSequence = 4;
@@ -154,7 +247,7 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-
+  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",3);
 }
 
 void Robot::TeleopPeriodic() {
@@ -168,13 +261,19 @@ void Robot::TeleopPeriodic() {
     BallIntake.IntakeBalls(joystick.GetRawButton(11), joystick.GetRawButton(12));
     Pneu.moveIntake(joystick.GetRawButton(11), joystick.GetRawButton(12));
 
+    //Shoot.ChangePower(joystick2.GetRawButton(3), joystick2.GetRawButton(4));
+
     Shoot.spinrev(joystick.GetRawButton(1), Yoffset);
-    turret.smartMan(joystick.GetRawButton(7), joystick.GetRawButton(8), joystick.GetRawButton(2), joystick.GetRawButton(1), Xoffset, Yoffset, targetSkew);
+    turret.smartMan(joystick2.GetRawButton(3), joystick2.GetRawButton(4), joystick2.GetRawButton(2), joystick.GetRawButton(2), Xoffset, Yoffset, targetSkew);
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",1);
+}
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() {
+  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode",1);
+}
 
 void Robot::TestInit() {}
 

@@ -24,7 +24,7 @@
 class Autonomous{
     public:
         Autonomous();
-        void init(bool isRed);
+        void init(frc::Trajectory trajectory);
         void getOdom();
         void GenerateTrajectory();
         bool TurnLeft(double angle);
@@ -32,8 +32,8 @@ class Autonomous{
         bool FollowTrajectory(frc::Trajectory trajectory);
         void FollowBounceTrajectory();
 
-        frc::Trajectory blue1 = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
-        frc::Trajectory blue2 = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2to4blue.wpilib.json");
+        frc::Trajectory blue2ball = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2ballblue.wpilib.json");
+        frc::Trajectory blue2balltofeeder = frc::TrajectoryUtil::FromPathweaverJson("/home/lvuser/deploy/paths/2to4blue.wpilib.json");
         frc::Timer m_timer;
 
         //declaring it here allows the main robot cpp to use it without throwing sparkmax CAN errors
